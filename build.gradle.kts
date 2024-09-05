@@ -66,12 +66,6 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
 
-    // If you don't want mixins, remove these lines
-    shadowImpl("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
-        isTransitive = false
-    }
-    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
-
     // If you don't want to log in with your real minecraft account, remove this line
     runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.2")
 
@@ -86,23 +80,16 @@ dependencies {
 loom {
     launchConfigs {
         "client" {
-            // If you don't want mixins, remove these lines
-            property("mixin.debug", "true")
-            property("asmhelper.verbose", "true")
-            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
 
-            arg("--mods", devenvMod.resolve().joinToString(",") { it.relativeTo(file("run")).path })
+            arg("--mods", devenvMod.resolve().joinToString(",") {
+                val resolvedPath = it.relativeToOrNull(file("run"))?.path ?: it.absolutePath
+                resolvedPath
+            })
+
         }
     }
     forge {
         pack200Provider.set(dev.architectury.pack200.java.Pack200Adapter())
-        // If you don't want mixins, remove this lines
-        mixinConfig("mixins.$modid.json")
-    }
-    // If you don't want mixins, remove these lines
-    @Suppress("UnstableApiUsage")
-    mixin {
-        defaultRefmapName.set("mixins.$modid.refmap.json")
     }
 }
 
@@ -131,10 +118,6 @@ tasks.withType(Jar::class) {
     manifest.attributes.run {
         this["FMLCorePluginContainsFMLMod"] = "true"
         this["ForceLoadAsMod"] = "true"
-
-        // If you don't want mixins, remove these lines
-        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
-        this["MixinConfigs"] = "mixins.$modid.json"
     }
 }
 
