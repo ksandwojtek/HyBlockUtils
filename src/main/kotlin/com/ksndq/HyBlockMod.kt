@@ -28,7 +28,7 @@ class HyBlockMod {
 
     companion object {
         lateinit var configManager: ConfigManager
-        const val MOD_ID = "examplemod"
+        const val MOD_ID = "hyblockutils"
 
         @JvmStatic
         val version: String
